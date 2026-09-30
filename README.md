@@ -11,7 +11,7 @@ I also just dropped a lot of binaries which i will clean up later and put them t
 
 The build commands are inside build.sh, make sure to install the Raylib library if you are going to compile it yourself.
 `super-hydric-guy` is the game itself built for Linux x86 (i built it on Linux Mint GCC).
-Ditto for `editor`.
+Same for `editor`.
 
 Game controls:
 - A/D: walk
