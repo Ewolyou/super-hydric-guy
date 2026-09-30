@@ -26,6 +26,7 @@ Same for `editor`.
 ### v1.1:
 - **FINALLY FIXED AI COLLISION ETC.**
 - added a Mini HG powerup that can be used by changing the powerup through the code (will make a powerup later)
+- changed the powerup system so SUPER is unreachable without code edit, and getting hurt turns you to SMALL/NORMAL which has an incomplete sprite
 - cleaned up the code a bit
 - added some macros for convenience
 - some other minor changes
