@@ -29,3 +29,8 @@ Same for `editor`.
 - cleaned up the code a bit
 - added some macros for convenience
 - some other minor changes
+
+### NEXT: AI editor
+- i will make a separate app that will allow you to create and edit custom AIs and assign them to any sprite,
+- i will also add tabs to switch between the tileset and sprite placement menu inside `editor`
+- this will take long
