@@ -14,9 +14,9 @@ The build commands are inside build.sh, make sure to install the Raylib library 
 Ditto for `editor`.
 
 Game controls:
-A/D: walk
-Hold Left Shift while walking: run (with acceleration and friciton slide)
-SPACE: jump, hit blocks containing the Jump Boost powerup
-S while in air: ground pound, can be cancelled with W while ground pounding (hit blocks containing the Jump Boost powerup)
-Right Click while in air: twirl
-SPACE while in air (with Jump Boost): double jump once (resets when grounded)
+- A/D: walk
+- Hold Left Shift while walking: run (with acceleration and friciton slide)
+- SPACE: jump, hit blocks containing the Jump Boost powerup
+- S while in air: ground pound, can be cancelled with W while ground pounding (hit blocks containing the Jump Boost powerup)
+- Right Click while in air: twirl
+- SPACE while in air (with Jump Boost): double jump once (resets when grounded)
