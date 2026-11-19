@@ -2,15 +2,15 @@
 This is my own platformer game that i coded in C, i made all the graphics, sounds and music myself (that's why the music sounds funny). i used GIMP, Piskel, Audacity, and LMMS for the media and i used the Raylib library for the game.
 
 Here is the details about the files:
-  umm, well actually this isnt the first version of the game. i actually started this project on 17/08/2026. i dont have any copies of the older versions, even though VS Code's timeline saved me when   i made errors, it doesnt keep that old files. but whatever, i will call this version 1. and here it is, the whole project folder dumped.
+  umm, well actually this isnt the first version of the game. i actually started this project on 17/08/2026. i dont have any copies of the older versions, even though VS Code's timeline saved me when   I made errors, it doesnt keep that old files. but whatever, i will call this version 1. and here it is, the whole project folder dumped.
 
-As you can see, the game is Mario-like.
+As you can see, the game is Mario-like (I recreated most stuff from Mario).
 I made an editor that edits level.c, and the game itself which loads level.c, you will understand how the editor works once you open it.
 
-I also just dropped a lot of binaries which i will clean up later and put them to Releases.
+I also just dropped a lot of binaries which I will clean up later and put them to Releases.
 
 The build commands are inside build.sh, make sure to install the Raylib library if you are going to compile it yourself.
-`super-hydric-guy` is the game itself built for Linux x86 (i built it on Linux Mint GCC).
+`super-hydric-guy` is the game itself built for Linux x86 (I built it on Linux Mint GCC).
 Same for `editor`.
 
 ## Game controls:
@@ -24,8 +24,9 @@ Same for `editor`.
 ## CHANGELOG
 
 ### NEXT: AI editor and A LOT OF NEW STUFF!!!
-- i will make a separate app that will allow you to create and edit custom AIs and assign them to any sprite,
-- i will also add tabs to switch between the tileset and sprite placement menu inside `editor`
+- I will make a separate app that will allow you to create and edit custom AIs and assign them to any sprite,
+- OLD: I will also add tabs to switch between the tileset and sprite placement menu inside `editor`
+-   NOW: extended the window to fit more stuff in the editor but I am planning to add a 2nd tileset to be able to combine different tilesets in one level and it will be behind tileset 1, I MIGHT add tileset 0           LATER which will appear in front of the player.
 - this will take long
 - more :)....
 
