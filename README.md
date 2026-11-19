@@ -23,6 +23,9 @@ Same for `editor`.
 
 ## CHANGELOG
 
+### WHOOPS
+  all the current development is pushed so... this is not the final version so I'm not writing a changelog for it, but there's a LOT that I added, so I will make the version something like v1.10.
+
 ### NEXT: AI editor and A LOT OF NEW STUFF!!!
 - I will make a separate app that will allow you to create and edit custom AIs and assign them to any sprite,
 - OLD: I will also add tabs to switch between the tileset and sprite placement menu inside `editor`
