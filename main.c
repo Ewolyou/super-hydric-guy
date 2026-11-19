@@ -3,10 +3,10 @@
 #include "level.h"
 #include "AI_list.h"
 
-#define EGG_POWERUP_WIDTH 16
-#define EGG_POWERUP_HEIGHT 16
-#define JB_POWERUP_WIDTH 16
-#define JB_POWERUP_HEIGHT 16
+#define EGG_POWERUP_WIDTH 15
+#define EGG_POWERUP_HEIGHT 15
+#define JB_POWERUP_WIDTH 15
+#define JB_POWERUP_HEIGHT 15
 
 #define EGG_POWERUP 1
 #define JB_POWERUP 2
@@ -16,6 +16,7 @@
 #define SUPER 1
 #define JUMP_BOOST 2
 #define MINI 3
+
 #define POWERUP_MAX 3
 #define MAX_POWERUP_SPAWN 5
 
@@ -87,7 +88,7 @@ int freeJBPowerupSlot = 0;
 Vector2 JBPowerupPos[MAX_POWERUP_SPAWN] = {0};
 
 
-void switchPowerup(struct Player *player, int downgrade, int targetPowerup, struct Sounds sounds) {
+void switchPowerup(struct Player *player, int downgrade, int forceChange, int targetPowerup, struct Sounds sounds) {
 	if(downgrade) {
 		if(player->powerup == SMALL || player->powerup == MINI) player->dead = 1;
 		else if(player->powerup == SUPER) {
@@ -105,10 +106,13 @@ void switchPowerup(struct Player *player, int downgrade, int targetPowerup, stru
 		PlaySound(sounds.powerUpSound);
 		if(targetPowerup < 0) targetPowerup = 0;
 		else if(targetPowerup > POWERUP_MAX) targetPowerup = POWERUP_MAX;
-		if(player->powerup == SMALL && (targetPowerup == SUPER || targetPowerup == JUMP_BOOST))
+
+		if(forceChange || player->powerup < targetPowerup) {
+			if(player->powerup == SMALL && (targetPowerup == SUPER || targetPowerup == JUMP_BOOST))
 			player->y -= 16;
-		player->powerup = targetPowerup;
-		if(targetPowerup == JUMP_BOOST) player->doubleJump = 1;
+			player->powerup = targetPowerup;
+			if(targetPowerup == JUMP_BOOST) player->doubleJump = 1;
+		}
 	}
 }
 
@@ -164,7 +168,21 @@ int checkCollisionOfSubject(int side, float *subjectX, float *subjectY, float su
 	int bottomPixel = (int)*subjectY + subjectHeight;
 	int bottomTileForBottom = bottomPixel / 16;
 
-	Rectangle subjectRec = {*subjectX, *subjectY, subjectWidth, subjectHeight}
+	Rectangle subjectRec = {*subjectX, *subjectY, subjectWidth, subjectHeight};
+	Rectangle eggPowerupRec[MAX_POWERUP_SPAWN] = {0};
+	Rectangle JBPowerupRec[MAX_POWERUP_SPAWN] = {0};
+
+	for(int i = 0; i < MAX_POWERUP_SPAWN; i++) {
+		eggPowerupRec[i].x = eggPowerupPos[i].x;
+		eggPowerupRec[i].y = eggPowerupPos[i].y;
+		eggPowerupRec[i].width = EGG_POWERUP_WIDTH;
+		eggPowerupRec[i].height = EGG_POWERUP_HEIGHT;
+
+		JBPowerupRec[i].x = JBPowerupPos[i].x;
+		JBPowerupRec[i].y = JBPowerupPos[i].y;
+		JBPowerupRec[i].width = JB_POWERUP_WIDTH;
+		JBPowerupRec[i].height = JB_POWERUP_HEIGHT;
+	}
 
 
 	int X1Tile = 0;
@@ -276,13 +294,18 @@ int checkCollisionOfSubject(int side, float *subjectX, float *subjectY, float su
 
 			if(isPlayer) {
 				if(level[Y1Tile][X1Tile].jumpBoost || level[Y1Tile][X2Tile].jumpBoost) {
+					int spawnTwoEgg = 0; // STILL DOESNT WORK AHHHHHHHHHHHHHHHHHHHHHHHHHHH
+					int spawnTwoJB = 0;
 					if(level[Y1Tile][X1Tile].jumpBoost) {
 						PlaySound(sounds.blockPowerUpThrowSound);
 
-						if(player->powerup == MINI || player->powerup == SMALL)
+						if(player->powerup == MINI || player->powerup == SMALL) {
 							spawnPowerup(EGG_POWERUP, X1Tile, Y1Tile-1);
+							spawnTwoEgg = 1;
+						}
 						else {
 							spawnPowerup(JB_POWERUP, X1Tile, Y1Tile-1);
+							spawnTwoJB = 1;
 						}
 
 						level[Y1Tile][X1Tile].jumpBoost = 0;
@@ -290,6 +313,9 @@ int checkCollisionOfSubject(int side, float *subjectX, float *subjectY, float su
 					}
 					if(level[Y1Tile][X2Tile].jumpBoost) {
 						PlaySound(sounds.blockPowerUpThrowSound);
+
+						if(spawnTwoEgg) advanceEggPowerup++;
+						if(spawnTwoJB)  advanceJBPowerup++;
 
 						if(player->powerup == MINI || player->powerup == SMALL)
 							spawnPowerup(EGG_POWERUP, X2Tile, Y1Tile-1);
@@ -322,17 +348,15 @@ int checkCollisionOfSubject(int side, float *subjectX, float *subjectY, float su
 
 			for(int i = 0; i < MAX_POWERUP_SPAWN; i++) {
 				if(usedEggPowerup[i]) {
-					if( (eggPowerupPos[i].x == X1Pixel || eggPowerupPos[i].x == X2Pixel) &&
-						(eggPowerupPos[i].y == Y1Pixel || eggPowerupPos[i].y == Y2Pixel) ) {
-							switchPowerup(player, 0, SUPER, sounds);
+					if( CheckCollisionRecs(eggPowerupRec[i], subjectRec) ) {
+							switchPowerup(player, 0, 0, SUPER, sounds);
 							despawnPowerup(EGG_POWERUP, i);
 					}
 				}
 
 				if(usedJBPowerup[i]) {
-					if( (JBPowerupPos[i].x == X1Pixel || JBPowerupPos[i].x == X2Pixel) &&
-						(JBPowerupPos[i].y == Y1Pixel || JBPowerupPos[i].y == Y2Pixel) ) {
-							switchPowerup(player, 0, JUMP_BOOST, sounds);
+					if( CheckCollisionRecs(JBPowerupRec[i], subjectRec) ) {
+							switchPowerup(player, 0, 1, JUMP_BOOST, sounds);
 							despawnPowerup(JB_POWERUP, i);
 					}
 				}
@@ -341,7 +365,7 @@ int checkCollisionOfSubject(int side, float *subjectX, float *subjectY, float su
 			if(level[Y1Tile][X1Tile].harmful ||
 			level[Y2Tile][X2Tile].harmful) {
 				if(!player->invincible) {
-					switchPowerup(player, 1, 0, sounds);
+					switchPowerup(player, 1, 0, 0, sounds);
 				}
 			}
 
