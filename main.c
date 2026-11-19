@@ -164,6 +164,9 @@ int checkCollisionOfSubject(int side, float *subjectX, float *subjectY, float su
 	int bottomPixel = (int)*subjectY + subjectHeight;
 	int bottomTileForBottom = bottomPixel / 16;
 
+	Rectangle subjectRec = {*subjectX, *subjectY, subjectWidth, subjectHeight}
+
+
 	int X1Tile = 0;
 	int X2Tile = 0;
 	int Y1Tile = 0;
