@@ -25,4 +25,6 @@ if [[ "$1" != "main" ]] && [[ "$1" != "level" ]] && [[ "$1" != "ai" ]] && [[ "$1
 	echo "./build.sh level   -  builds the level editor and other components"
 	echo "./build.sh ai      -  builds the AI editor and other components"
 	echo "./build.sh all     -  builds everything"
+else
+	echo "Compiled successfully."
 fi

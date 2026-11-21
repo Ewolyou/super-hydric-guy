@@ -52,10 +52,10 @@ typedef struct {
 
 typedef struct {
 	AIState state; // see (struct)AIState for details
-	int vulnerableOT; // -1 = 
-	int vulnerableOL; // hurts the player if he collides with sprite's left side
-	int vulnerableOR; // hurts the player if he collides with sprite's right side
-	int vulnerableOB; // hurts the player if he collides with sprite's bottom
+	int hurtsOT; // -1 = 
+	int hurtsOL; // hurts the player if he collides with sprite's left side
+	int hurtsOR; // hurts the player if he collides with sprite's right side
+	int hurtsOB; // hurts the player if he collides with sprite's bottom
 	int instaDeath; // instantly kills the player regardless of his powerup state
 	float maxSpeed;
 	float minSpeed;

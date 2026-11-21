@@ -60,9 +60,9 @@ void WriteAIState(FILE *f, const AIState *state) {
 void WriteSpriteAI(FILE *f, const SpriteAI *AI) {
 	WriteAIState(f, &AI->state);
 	fprintf(f,
-		", %d, %d, %d, %d, %d, %f, %f, %f, %f, %d, %f, %d, %d, %f, %f, %d, \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", %d, %d, %d, %f, %f, %f, %f, \"%s\", \"%s\"",
-		AI->vulnerableOT, AI->vulnerableOL,
-		AI->vulnerableOR, AI->vulnerableOB,
+		", %d, %d, %d, %d, %d, %f, %f, %f, %f, %d, %f, %d, %d, %f, %f, %d, \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", %d, %d, %d, %f, %f, %f, %f, \"%s\", \"%s\", %d, %d, %d, %d",
+		AI->hurtsOT, AI->hurtsOL,
+		AI->hurtsOR, AI->hurtsOB,
 		AI->instaDeath, (double)AI->maxSpeedX, (double)AI->minSpeedX,
 		(double)AI->velocityX, (double)AI->velocityY, AI->health,
 		(double)AI->rotating, AI->floats, AI->noClip,
@@ -70,7 +70,8 @@ void WriteSpriteAI(FILE *f, const SpriteAI *AI) {
 		AI->minSpeedXText, AI->accelXGainText, AI->accelYGainText, AI->rotatingText,
 		AI->gravityText, AI->syncRotationAndDirection, AI->eggPowerup,
 		AI->jumpBoostPowerup, AI->maxSpeedY, AI->minSpeedY, AI->accelXGain,
-		AI->accelYGain, AI->maxSpeedYText, AI->minSpeedYText);
+		AI->accelYGain, AI->maxSpeedYText, AI->minSpeedYText,
+		AI->solidOT, AI->solidOL, AI->solidOR, AI->solidOB);
 }
 
 void ExportListC(void) {
@@ -257,10 +258,10 @@ int main(void) {
 
 			Rectangle AIStateBox = {AI_INFO_START_X+860, AI_INFO_START_Y+AIFontGap, 50, AIFontSize-2};
 
-			Rectangle vulnerableOTBox = {AI_INFO_START_X, AI_INFO_START_Y+(AIFontGap*2), AI_INFO_END_X, AIFontSize};
-			Rectangle vulnerableOLBox = {AI_INFO_START_X, AI_INFO_START_Y+(AIFontGap*3), AI_INFO_END_X, AIFontSize};
-			Rectangle vulnerableORBox = {AI_INFO_START_X, AI_INFO_START_Y+(AIFontGap*4), AI_INFO_END_X, AIFontSize};
-			Rectangle vulnerableOBBox = {AI_INFO_START_X, AI_INFO_START_Y+(AIFontGap*5), AI_INFO_END_X, AIFontSize};
+			Rectangle hurtsOTBox = {AI_INFO_START_X, AI_INFO_START_Y+(AIFontGap*2), AI_INFO_END_X, AIFontSize};
+			Rectangle hurtsOLBox = {AI_INFO_START_X, AI_INFO_START_Y+(AIFontGap*3), AI_INFO_END_X, AIFontSize};
+			Rectangle hurtsORBox = {AI_INFO_START_X, AI_INFO_START_Y+(AIFontGap*4), AI_INFO_END_X, AIFontSize};
+			Rectangle hurtsOBBox = {AI_INFO_START_X, AI_INFO_START_Y+(AIFontGap*5), AI_INFO_END_X, AIFontSize};
 
 			Rectangle maxSpeedXBox = {AI_INFO_START_X+650, AI_INFO_START_Y+(AIFontGap*6), 250, AIFontSize};
 			Rectangle minSpeedXBox = {AI_INFO_START_X+650, AI_INFO_START_Y+(AIFontGap*7), 250, AIFontSize};
@@ -296,32 +297,32 @@ int main(void) {
 				gravityEdit = CheckCollisionPointRec(mouse, gravityBox);
 			}
 
-			if(CheckCollisionPointRec(mouse, vulnerableOTBox) && noEdit) {
-				DrawRectangleLines(AI_INFO_START_X-10, vulnerableOTBox.y-3, vulnerableOTBox.width, vulnerableOTBox.height+6, BLACK);
+			if(CheckCollisionPointRec(mouse, hurtsOTBox) && noEdit) {
+				DrawRectangleLines(AI_INFO_START_X-10, hurtsOTBox.y-3, hurtsOTBox.width, hurtsOTBox.height+6, BLACK);
 				if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-					AIs[selectedAI].vulnerableOT++;
-					if(AIs[selectedAI].vulnerableOT > 3) AIs[selectedAI].vulnerableOT = 0;
+					AIs[selectedAI].hurtsOT++;
+					if(AIs[selectedAI].hurtsOT > 3) AIs[selectedAI].hurtsOT = 0;
 				}
 			}
-			else if(CheckCollisionPointRec(mouse, vulnerableOLBox) && noEdit) {
-				DrawRectangleLines(AI_INFO_START_X-10, vulnerableOLBox.y-3, vulnerableOLBox.width, vulnerableOLBox.height+6, BLACK);
+			else if(CheckCollisionPointRec(mouse, hurtsOLBox) && noEdit) {
+				DrawRectangleLines(AI_INFO_START_X-10, hurtsOLBox.y-3, hurtsOLBox.width, hurtsOLBox.height+6, BLACK);
 				if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-					AIs[selectedAI].vulnerableOL++;
-					if(AIs[selectedAI].vulnerableOL > 3) AIs[selectedAI].vulnerableOL = 0;
+					AIs[selectedAI].hurtsOL++;
+					if(AIs[selectedAI].hurtsOL > 3) AIs[selectedAI].hurtsOL = 0;
 				}
 			}
-			else if(CheckCollisionPointRec(mouse, vulnerableORBox) && noEdit) {
-				DrawRectangleLines(AI_INFO_START_X-10, vulnerableORBox.y-3, vulnerableORBox.width, vulnerableORBox.height+6, BLACK);
+			else if(CheckCollisionPointRec(mouse, hurtsORBox) && noEdit) {
+				DrawRectangleLines(AI_INFO_START_X-10, hurtsORBox.y-3, hurtsORBox.width, hurtsORBox.height+6, BLACK);
 				if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-					AIs[selectedAI].vulnerableOR++;
-					if(AIs[selectedAI].vulnerableOR > 3) AIs[selectedAI].vulnerableOR = 0;
+					AIs[selectedAI].hurtsOR++;
+					if(AIs[selectedAI].hurtsOR > 3) AIs[selectedAI].hurtsOR = 0;
 				}
 			}
-			else if(CheckCollisionPointRec(mouse, vulnerableOBBox) && noEdit) {
-				DrawRectangleLines(AI_INFO_START_X-10, vulnerableOBBox.y-3, vulnerableOBBox.width, vulnerableOBBox.height+6, BLACK);
+			else if(CheckCollisionPointRec(mouse, hurtsOBBox) && noEdit) {
+				DrawRectangleLines(AI_INFO_START_X-10, hurtsOBBox.y-3, hurtsOBBox.width, hurtsOBBox.height+6, BLACK);
 				if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-					AIs[selectedAI].vulnerableOB++;
-					if(AIs[selectedAI].vulnerableOB > 3) AIs[selectedAI].vulnerableOB = 0;
+					AIs[selectedAI].hurtsOB++;
+					if(AIs[selectedAI].hurtsOB > 3) AIs[selectedAI].hurtsOB = 0;
 				}
 			}
 			else if(CheckCollisionPointRec(mouse, floatsBox) && noEdit) {
@@ -357,10 +358,10 @@ int main(void) {
 
 			DrawText(TextFormat("Used AI State ID (\"%s\"):", AIStateNames[AIs[selectedAI].stateID]), AI_INFO_START_X, AI_INFO_START_Y+(AIFontGap*1), AIFontSize-2, BLACK);
 			GuiValueBox(AIStateBox, NULL, &AIs[selectedAI].stateID, 0, AI_STATE_LIMIT-1, AIStateBoxEdit);
-			DrawText(TextFormat("Vulnerable On Top: %s", PlayerNPCText[AIs[selectedAI].vulnerableOT]), AI_INFO_START_X, AI_INFO_START_Y+(AIFontGap*2), AIFontSize, AIs[selectedAI].vulnerableOT ? DARKGREEN : RED);
-			DrawText(TextFormat("Vulnerable On Left: %s", PlayerNPCText[AIs[selectedAI].vulnerableOL]), AI_INFO_START_X, AI_INFO_START_Y+(AIFontGap*3), AIFontSize, AIs[selectedAI].vulnerableOL ? DARKGREEN : RED);
-			DrawText(TextFormat("Vulnerable On Right: %s", PlayerNPCText[AIs[selectedAI].vulnerableOR]), AI_INFO_START_X, AI_INFO_START_Y+(AIFontGap*4), AIFontSize, AIs[selectedAI].vulnerableOR ? DARKGREEN : RED);
-			DrawText(TextFormat("Vulnerable On Bottom: %s", PlayerNPCText[AIs[selectedAI].vulnerableOB]), AI_INFO_START_X, AI_INFO_START_Y+(AIFontGap*5), AIFontSize, AIs[selectedAI].vulnerableOB ? DARKGREEN : RED);
+			DrawText(TextFormat("Hurts On Top: %s", PlayerNPCText[AIs[selectedAI].hurtsOT]), AI_INFO_START_X, AI_INFO_START_Y+(AIFontGap*2), AIFontSize, AIs[selectedAI].hurtsOT ? DARKGREEN : RED);
+			DrawText(TextFormat("Hurts On Left: %s", PlayerNPCText[AIs[selectedAI].hurtsOL]), AI_INFO_START_X, AI_INFO_START_Y+(AIFontGap*3), AIFontSize, AIs[selectedAI].hurtsOL ? DARKGREEN : RED);
+			DrawText(TextFormat("Hurts On Right: %s", PlayerNPCText[AIs[selectedAI].hurtsOR]), AI_INFO_START_X, AI_INFO_START_Y+(AIFontGap*4), AIFontSize, AIs[selectedAI].hurtsOR ? DARKGREEN : RED);
+			DrawText(TextFormat("Hurts On Bottom: %s", PlayerNPCText[AIs[selectedAI].hurtsOB]), AI_INFO_START_X, AI_INFO_START_Y+(AIFontGap*5), AIFontSize, AIs[selectedAI].hurtsOB ? DARKGREEN : RED);
 			
 			DrawText("Maximum Speed X (positive float value):", AI_INFO_START_X, AI_INFO_START_Y+(AIFontGap*6), AIFontSize, BLACK);
 			//GuiTextBox(maxSpeedXBox, AIs[selectedAI].maxSpeedXText, sizeof(AIs[selectedAI].maxSpeedXText), maxSpeedXEdit);

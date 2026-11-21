@@ -30,13 +30,16 @@ struct Obj {
 
 typedef struct {
 	SpriteAI AI;
-	int AI_ID;
+	char *AIName;
 	int textureID;
 	float width;
 	float height;
 	float x;
 	float y;
 	int unused;
+	float texWidth;
+	float texHeight;
+	char *textureName;
 } FinalSprite;
 
 extern struct Tile level[LEVEL_HEIGHT][LEVEL_WIDTH];

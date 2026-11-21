@@ -1,5 +1,6 @@
 #include <raylib.h>
 #include <stdio.h>
+#include <string.h>
 #include "level.h"
 #include "AI_list.h"
 
@@ -438,7 +439,7 @@ void moveAI(int x, SpriteAI *AI, float *posX, float *posY, float width, float dt
 	}
 }
 
-void updateAI(SpriteAI *AI, Texture2D sprite, float *posX, float *posY, float width, float height, int spriteFrame, float playerX, float playerY, float dt) {
+void updateAI(SpriteAI *AI, Texture2D sprite, float *posX, float *posY, float width, float height, float texWidth, float texHeight, int spriteFrame, float playerX, float playerY, float dt) {
 	// very complicated thing (syncs rotating direction with horizontal movement direction)
 	float rotating = AI->rotating;
 	if(AI->state.movesStartingLeft || AI->state.movesOneWayX < 0 || (AI->state.chasesX && playerX < *posX))
@@ -658,12 +659,12 @@ void updateAI(SpriteAI *AI, Texture2D sprite, float *posX, float *posY, float wi
 				AI->state.turnAroundY = 1;
 			}
 	}
-	float sourceWidth = AI->state.directionLR ? -width : width;
+	float sourceWidth = AI->state.directionLR ? -texWidth : texWidth;
 
 	//   				 ============ DEBUG ============
 	//DrawText(TextFormat("directionLR: %d", AI->state.directionLR), 10, 10, 20, RED);
 	
-	DrawTexturePro(sprite, (Rectangle){spriteFrame*width, 0, sourceWidth, height},
+	DrawTexturePro(sprite, (Rectangle){spriteFrame*texWidth, 0, sourceWidth, texHeight},
 						   (Rectangle){(*posX)+8, (*posY)+8, width, height},
 						   (Vector2){width/2.0f, height/2.0f}, AI->rotation, WHITE);
 }
@@ -819,7 +820,11 @@ int main(void)
 
 	for(int i = 0; i < SPRITE_LIMIT; i++) {
 		if(!sprites[i].unused) {
-			sprites[i].AI = AIs[sprites[i].AI_ID];
+			for(int j = 0; j < AI_LIMIT; j++) {
+				if(strcmp(sprites[i].AIName, AINames[j]) == 0) {
+					sprites[i].AI = AIs[j];
+				}
+			}
 		}
 	}
 
@@ -899,7 +904,7 @@ int main(void)
 						freeEggPowerupSlot = i;
 					}
 					else if(usedEggPowerup[i]) {
-						updateAI(&eggPowerupAI[i], eggPowerupTX, &eggPowerupPos[i].x, &eggPowerupPos[i].y, EGG_POWERUP_WIDTH, EGG_POWERUP_HEIGHT, 0, player.x, player.y, dt);
+						updateAI(&eggPowerupAI[i], eggPowerupTX, &eggPowerupPos[i].x, &eggPowerupPos[i].y, EGG_POWERUP_WIDTH, EGG_POWERUP_HEIGHT, 16, 16, 0, player.x, player.y, dt);
 					}
 
 					// jump boost
@@ -908,7 +913,7 @@ int main(void)
 						freeJBPowerupSlot = i;
 					}
 					else if(usedJBPowerup[i]) {
-						updateAI(&JBPowerupAI[i], JBPowerupTX, &JBPowerupPos[i].x, &JBPowerupPos[i].y, JB_POWERUP_WIDTH, JB_POWERUP_HEIGHT, 0, player.x, player.y, dt);
+						updateAI(&JBPowerupAI[i], JBPowerupTX, &JBPowerupPos[i].x, &JBPowerupPos[i].y, JB_POWERUP_WIDTH, JB_POWERUP_HEIGHT, 16, 16, 0, player.x, player.y, dt);
 					}
 				}
 				if(advanceEggPowerup > MAX_POWERUP_SPAWN) advanceEggPowerup = 0;
@@ -1168,11 +1173,15 @@ int main(void)
 				spriteScaleY = 16;
 			}
 
-			//updateAI(&__testAI, hurtle, &hurtleX, &hurtleY, hurtleW, hurtleH, frame, player.x, player.y, dt);
+			//updateAI(&__testAI, hurtle, &hurtleX, &hurtleY, hurtleW, hurtleH, hurtleW, hurtleH, frame, player.x, player.y, dt);
 
 			for(int i = 0; i < SPRITE_LIMIT; i++) {
 				if(!sprites[i].unused) {
-					updateAI(&sprites[i].AI, textures[sprites[i].textureID], &sprites[i].x, &sprites[i].y, sprites[i].width, sprites[i].height, frame, player.x, player.y, dt);
+					updateAI(&sprites[i].AI, textures[sprites[i].textureID],
+						&sprites[i].x, &sprites[i].y,
+						sprites[i].width, sprites[i].height,
+						sprites[i].texWidth, sprites[i].texHeight,
+						frame, player.x, player.y, dt);
 				}
 			}
 

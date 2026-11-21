@@ -44,10 +44,10 @@ typedef struct {
 
 typedef struct {
 	AIState state; // see (struct)AIState for details
-	int vulnerableOT; // 0 = off, 1 = vulnerable to non-player, 2 = vulnerable to player, 3 = vulnerable to non-player AND player
-	int vulnerableOL; // 0 = off, 1 = vulnerable to non-player, 2 = vulnerable to player, 3 = vulnerable to non-player AND player
-	int vulnerableOR; // 0 = off, 1 = vulnerable to non-player, 2 = vulnerable to player, 3 = vulnerable to non-player AND player
-	int vulnerableOB; // 0 = off, 1 = vulnerable to non-player, 2 = vulnerable to player, 3 = vulnerable to non-player AND player
+	int hurtsOT; // 0 = off, 1 = vulnerable to non-player, 2 = vulnerable to player, 3 = vulnerable to non-player AND player
+	int hurtsOL; // 0 = off, 1 = vulnerable to non-player, 2 = vulnerable to player, 3 = vulnerable to non-player AND player
+	int hurtsOR; // 0 = off, 1 = vulnerable to non-player, 2 = vulnerable to player, 3 = vulnerable to non-player AND player
+	int hurtsOB; // 0 = off, 1 = vulnerable to non-player, 2 = vulnerable to player, 3 = vulnerable to non-player AND player
 	int instaDeath; // 0 = off, 1 = instadeath to non-player, 2 = instadeath to player, 3 = instadeath to non-player AND player
 	float maxSpeedX;
 	float minSpeedX;
@@ -78,6 +78,10 @@ typedef struct {
 	float accelYGain;
 	char maxSpeedYText[10];
 	char minSpeedYText[10];
+	int solidOT;
+	int solidOL;
+	int solidOR;
+	int solidOB;
 } SpriteAI;
 
 //extern AIState UnusedAIState;

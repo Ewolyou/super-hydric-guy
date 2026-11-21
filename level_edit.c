@@ -35,16 +35,23 @@ int jumpBoostMode = 0;
 int harmfulMode = 0;
 int instaDeathMode = 0;
 int showGrid = 1;
+
 int selectedTile = 0;
 int selectedTexture = 0;
 int selectedAI = 0;
 int selectedSprite = 0;
+
+int texWidth = 16;
+int texHeight = 16;
 int spriteWidth = 16;
 int spriteHeight = 16;
 int spriteCount = 0;
 
 int spriteWidthEdit = 0;
 int spriteHeightEdit = 0;
+int texWidthEdit = 0;
+int texHeightEdit = 0;
+
 int levelMusicEdit = 0;
 int levelBGEdit = 0;
 int levelTilesetEdit = 0;
@@ -208,7 +215,7 @@ void EditTile(Vector2 mouse) {
 	}
 }
 
-void EditSprite(Vector2 mouse, Texture2D *textures) {
+void EditSprite(Vector2 mouse, Texture2D *textures, char **textureNames) {
 	if(showSprites) {
 		if(mouse.x >= 0 &&
 		mouse.y >= 0 &&
@@ -223,10 +230,12 @@ void EditSprite(Vector2 mouse, Texture2D *textures) {
 				}
 				if(selectedSprite >= 0 && selectedSprite < SPRITE_LIMIT) {
 					sprites[selectedSprite].unused = 0;
-					sprites[selectedSprite].AI_ID = selectedAI;
-					sprites[selectedSprite].textureID = selectedTexture;
+					strcpy(sprites[selectedSprite].AIName, AINames[selectedAI]);
+					strcpy(sprites[selectedSprite].textureName, textureNames[selectedTexture]);
 					sprites[selectedSprite].width = spriteWidth;
 					sprites[selectedSprite].height = spriteHeight;
+					sprites[selectedSprite].texWidth = texWidth;
+					sprites[selectedSprite].texHeight = texHeight;
 					sprites[selectedSprite].x = tx*8;
 					sprites[selectedSprite].y = ty*8;
 					spriteCount++;
@@ -375,10 +384,14 @@ void EditOther(Vector2 mouse, Texture2D *textures, char **textureNames, int text
 	Rectangle levelTilesetBox = {LEVEL_WIDTH_PIXEL+380, 50, 300, 20};
 	Rectangle spriteWidthBox = {LEVEL_WIDTH_PIXEL+580, 80, 100, 20};
 	Rectangle spriteHeightBox = {LEVEL_WIDTH_PIXEL+580, 100, 100, 20};
+	Rectangle texWidthBox = {LEVEL_WIDTH_PIXEL+580, 120, 100, 20};
+	Rectangle texHeightBox = {LEVEL_WIDTH_PIXEL+580, 140, 100, 20};
 
 	if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && noEdit) {
 		spriteWidthEdit = CheckCollisionPointRec(mouse, spriteWidthBox);
 		spriteHeightEdit = CheckCollisionPointRec(mouse, spriteHeightBox);
+		texWidthEdit = CheckCollisionPointRec(mouse, texWidthBox);
+		texHeightEdit = CheckCollisionPointRec(mouse, texHeightBox);
 		levelMusicEdit = CheckCollisionPointRec(mouse, levelMusicBox);
 		levelBGEdit = CheckCollisionPointRec(mouse, levelBGBox);
 		levelTilesetEdit = CheckCollisionPointRec(mouse, levelTilesetBox);
@@ -399,6 +412,11 @@ void EditOther(Vector2 mouse, Texture2D *textures, char **textureNames, int text
 	GuiValueBox(spriteWidthBox, NULL, &spriteWidth, 1, LEVEL_WIDTH_PIXEL, spriteWidthEdit);
 	DrawText("Sprite Height (pixels):", LEVEL_WIDTH_PIXEL+340, 100, 20, BLACK);
 	GuiValueBox(spriteHeightBox, NULL, &spriteHeight, 1, LEVEL_HEIGHT_PIXEL, spriteHeightEdit);
+
+	DrawText("Texture Width (pixels):", LEVEL_WIDTH_PIXEL+340, 120, 20, BLACK);
+	GuiValueBox(texWidthBox, NULL, &texWidth, 1, LEVEL_WIDTH_PIXEL, texWidthEdit);
+	DrawText("Texture Height (pixels):", LEVEL_WIDTH_PIXEL+340, 140, 20, BLACK);
+	GuiValueBox(texHeightBox, NULL, &texHeight, 1, LEVEL_HEIGHT_PIXEL, texHeightEdit);
 
 	DrawText("Sprite Textures:", LEVEL_WIDTH_PIXEL+330, 170, 20, BLACK);
 	DrawRectangleLines(LEVEL_WIDTH_PIXEL+330, 200, 300, LEVEL_HEIGHT_PIXEL-210, BLACK);
@@ -464,7 +482,7 @@ void ExportLevelC(void) {
 		fprintf(level_export, "{");
 		// FORMAT
 		//fprintf(level_export, "{0}, 0, 0, 16, 16, 0, 0, 1}");
-		fprintf(level_export, "{0}, %d, %d, %f, %f, %f, %f, %d}", sprites[i].AI_ID, sprites[i].textureID, sprites[i].width, sprites[i].height, sprites[i].x, sprites[i].y, sprites[i].unused);
+		fprintf(level_export, "{0}, %s, %d, %f, %f, %f, %f, %d, %f, %f, %s}", sprites[i].AIName, sprites[i].textureID, sprites[i].width, sprites[i].height, sprites[i].x, sprites[i].y, sprites[i].unused, sprites[i].texWidth, sprites[i].texHeight, sprites[i].textureName);
 		fprintf(level_export, "%s", i + 1 == SPRITE_LIMIT ? "\n" : ",\n\t");
 	}
 	fprintf(level_export, "};\n\n");
@@ -712,7 +730,7 @@ int main(void) {
 		if(tileEditMode && noEdit) EditTile(mouse);
 
 		DrawLevel(tileset1, symbols);
-		if(!tileEditMode && noEdit) EditSprite(mouse, textures);
+		if(!tileEditMode && noEdit) EditSprite(mouse, textures, textureNames);
 		DrawTileset(tileset1);
 		EditOther(mouse, textures, textureNames, textureCount);
 		
@@ -752,7 +770,7 @@ int main(void) {
 			for(int i = 0; i < SPRITE_LIMIT; i++) {
 				if(!sprites[i].unused) {
 					DrawTexturePro(textures[sprites[i].textureID],
-						(Rectangle){0, 0, sprites[i].width, sprites[i].height},
+						(Rectangle){0, 0, sprites[i].texWidth, sprites[i].texHeight},
 						(Rectangle){sprites[i].x, sprites[i].y, sprites[i].width, sprites[i].height},
 						(Vector2){0, 0}, 0.0f, WHITE);
 				}
