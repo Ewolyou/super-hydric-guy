@@ -72,8 +72,8 @@ int noEditBG = 0;
 int noEditMusic = 0;
 int noEditTileset = 0;
 
-AIState UnusedAIState = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x0p+0f, 0x0p+0f, 0x0p+0f};
-SpriteAI UnusedAI = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x0p+0f, 0x0p+0f, 0x0p+0f}, 0, 0, 0, 0, 0, 0x0p+0f, 0x0p+0f, 0x0p+0f, 0x0p+0f, 0, 0x0p+0f, 0, 0, 0x0p+0f, 0x0p+0f, 0, "0\0", "0\0", "0\0", "0\0", "0\0", "0\0"};
+AIState UnusedAIState = {0};
+SpriteAI UnusedAI = {{0}, 0};
 
 Texture2D NoTexture = {0};
 //FinalSprite UnusedSprite = {UnusedAI, NoTexture, 16, 16, 0, 0, 1};
@@ -215,7 +215,7 @@ void EditTile(Vector2 mouse) {
 	}
 }
 
-void EditSprite(Vector2 mouse, Texture2D *textures, char **textureNames) {
+void EditSprite(Vector2 mouse, Texture2D *textures, char **textureNames, int textureCount) {
 	if(showSprites) {
 		if(mouse.x >= 0 &&
 		mouse.y >= 0 &&
@@ -232,6 +232,19 @@ void EditSprite(Vector2 mouse, Texture2D *textures, char **textureNames) {
 					sprites[selectedSprite].unused = 0;
 					strcpy(sprites[selectedSprite].AIName, AINames[selectedAI]);
 					strcpy(sprites[selectedSprite].textureName, textureNames[selectedTexture]);
+					for(int i = 0; i < SPRITE_LIMIT; i++) {
+						for(int j = 0; j < textureCount; j++) {
+							if(strcmp(sprites[i].textureName, textureNames[j]) == 0) {
+								sprites[i].textureID = j;
+							}
+						}
+
+						/*for(int j = 0; j < AI_LIMIT; j++) {
+							if(strcmp(sprites[i].AIName, AINames[j]) == 0) {
+								sprites[i].AI_ID = j; // ??? whoopsie
+							}
+						}*/
+					}
 					sprites[selectedSprite].width = spriteWidth;
 					sprites[selectedSprite].height = spriteHeight;
 					sprites[selectedSprite].texWidth = texWidth;
@@ -387,7 +400,7 @@ void EditOther(Vector2 mouse, Texture2D *textures, char **textureNames, int text
 	Rectangle texWidthBox = {LEVEL_WIDTH_PIXEL+580, 120, 100, 20};
 	Rectangle texHeightBox = {LEVEL_WIDTH_PIXEL+580, 140, 100, 20};
 
-	if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && noEdit) {
+	if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
 		spriteWidthEdit = CheckCollisionPointRec(mouse, spriteWidthBox);
 		spriteHeightEdit = CheckCollisionPointRec(mouse, spriteHeightBox);
 		texWidthEdit = CheckCollisionPointRec(mouse, texWidthBox);
@@ -481,8 +494,8 @@ void ExportLevelC(void) {
 	for(int i = 0; i < SPRITE_LIMIT; i++) {
 		fprintf(level_export, "{");
 		// FORMAT
-		//fprintf(level_export, "{0}, 0, 0, 16, 16, 0, 0, 1}");
-		fprintf(level_export, "{0}, %s, %d, %f, %f, %f, %f, %d, %f, %f, %s}", sprites[i].AIName, sprites[i].textureID, sprites[i].width, sprites[i].height, sprites[i].x, sprites[i].y, sprites[i].unused, sprites[i].texWidth, sprites[i].texHeight, sprites[i].textureName);
+		//fprintf(level_export, "{0}, 0, 0, 16, 16, 0, 0, .unused = 1, 16, 16, 0}");
+		fprintf(level_export, "{0}, \"%s\", %d, %f, %f, %f, %f, %d, %f, %f, \"%s\"}", sprites[i].AIName, sprites[i].textureID, sprites[i].width, sprites[i].height, sprites[i].x, sprites[i].y, sprites[i].unused, sprites[i].texWidth, sprites[i].texHeight, sprites[i].textureName);
 		fprintf(level_export, "%s", i + 1 == SPRITE_LIMIT ? "\n" : ",\n\t");
 	}
 	fprintf(level_export, "};\n\n");
@@ -630,10 +643,10 @@ int main(void) {
 			backgroundChanged = 0;
 		}
 		
-		noEdit = !spriteWidthEdit && !spriteHeightEdit && !levelBGEdit && !levelMusicEdit && !levelTilesetEdit && !showSaveMessage;
-		noEditMusic = !spriteWidthEdit && !spriteHeightEdit && !levelBGEdit && !levelTilesetEdit && !showSaveMessage;
-		noEditBG = !spriteWidthEdit && !spriteHeightEdit && !levelMusicEdit && !levelTilesetEdit && !showSaveMessage;
-		noEditTileset = !spriteWidthEdit && !spriteHeightEdit && !levelMusicEdit && !levelBGEdit && !showSaveMessage;
+		noEdit = !texWidthEdit && !texHeightEdit && !spriteWidthEdit && !spriteHeightEdit && !levelBGEdit && !levelMusicEdit && !levelTilesetEdit && !showSaveMessage;
+		noEditMusic = !texWidthEdit && !texHeightEdit && !spriteWidthEdit && !spriteHeightEdit && !levelBGEdit && !levelTilesetEdit && !showSaveMessage;
+		noEditBG = !texWidthEdit && !texHeightEdit && !spriteWidthEdit && !spriteHeightEdit && !levelMusicEdit && !levelTilesetEdit && !showSaveMessage;
+		noEditTileset = !texWidthEdit && !texHeightEdit && !spriteWidthEdit && !spriteHeightEdit && !levelMusicEdit && !levelBGEdit && !showSaveMessage;
 
 		// keybinds
 		if(noEdit) {
@@ -730,7 +743,7 @@ int main(void) {
 		if(tileEditMode && noEdit) EditTile(mouse);
 
 		DrawLevel(tileset1, symbols);
-		if(!tileEditMode && noEdit) EditSprite(mouse, textures, textureNames);
+		if(!tileEditMode && noEdit) EditSprite(mouse, textures, textureNames, textureCount);
 		DrawTileset(tileset1);
 		EditOther(mouse, textures, textureNames, textureCount);
 		

@@ -858,7 +858,7 @@ int main(void)
 			if(IsKeyPressed(KEY_SPACE)) jumpBuffer = 0.1f;
 			if(!player.groundPounding && IsKeyPressed(KEY_S)) groundPoundBuffer = 0.1f;
 			if(player.groundPounding && IsKeyPressed(KEY_W)) {groundPoundBuffer = 0.0f; velocityY = 0.0f; groundPoundTimer = 0.0f; player.groundPounding = 0;}
-			if(twirlCooldown == 0 && !player.grounded && !player.twirling && IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
+			if(twirlCooldown == 0 && !player.grounded && !player.twirling && (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) || IsKeyPressed(KEY_J))) {
 				if(player.powerup == MINI) PlaySound(sounds.miniTwirlSound);
 				else PlaySound(sounds.twirlSound);
 				player.twirling = 1;
