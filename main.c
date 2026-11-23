@@ -88,6 +88,8 @@ int usedJBPowerup[MAX_POWERUP_SPAWN] = {0};
 int freeJBPowerupSlot = 0;
 Vector2 JBPowerupPos[MAX_POWERUP_SPAWN] = {0};
 
+Rectangle levelRecs[LEVEL_HEIGHT][LEVEL_WIDTH] = {0};
+
 
 void switchPowerup(struct Player *player, int downgrade, int forceChange, int targetPowerup, struct Sounds sounds) {
 	if(downgrade) {
@@ -228,6 +230,8 @@ int checkCollisionOfSubject(int side, float *subjectX, float *subjectY, float su
 	float X2Pixel = X2Tile*16;
 	float Y1Pixel = Y1Tile*16;
 	float Y2Pixel = Y2Tile*16;
+
+	//tileRec = levelRecs[] WHAT DO I DO
 
 	if(X1Tile >= 0 && X1Tile < LEVEL_WIDTH &&
 	X2Tile >= 0 && X2Tile < LEVEL_WIDTH &&
@@ -825,6 +829,12 @@ int main(void)
 					sprites[i].AI = AIs[j];
 				}
 			}
+		}
+	}
+
+	for(int y = 0; y < LEVEL_HEIGHT; y++) {
+		for(int x = 0; x < LEVEL_WIDTH; x++) {
+			levelRecs[y][x] = (Rectangle){x, y, TILE_WIDTH, TILE_HEIGHT};
 		}
 	}
 
